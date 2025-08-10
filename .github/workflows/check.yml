@@ -1,0 +1,15 @@
+name: Check HTML
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  check-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: دریافت فایل‌ها
+        uses: actions/checkout@v3
+
+      - name: نمایش لیست فایل‌ها
+        run: ls -l
