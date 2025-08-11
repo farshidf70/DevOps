@@ -1,0 +1,24 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]  # هر وقت روی main تغییر دادی اجرا بشه
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: دریافت فایل‌ها
+        uses: actions/checkout@v3
+
+      - name: ساخت پوشه انتشار
+        run: |
+          mkdir public
+          cp index.html public/index.html
+          echo "آخرین بروزرسانی: $(date)" >> public/index.html
+
+      - name: انتشار روی GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
