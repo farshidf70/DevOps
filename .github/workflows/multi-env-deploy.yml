@@ -1,0 +1,31 @@
+name: Multi Environment Deploy
+
+on:
+  push:
+    branches: ["main", "staging"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: دریافت کد
+        uses: actions/checkout@v3
+
+      - name: ساخت پوشه انتشار
+        run: |
+          mkdir public
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "این نسخه Production است" > public/index.html
+          else
+            mkdir -p public/staging
+            echo "این نسخه Staging است" > public/staging/index.html
+          fi
+
+      - name: انتشار روی GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+    environment:
+      name: ${{ github.ref_name }}
+      url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
