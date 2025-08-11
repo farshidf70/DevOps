@@ -1,0 +1,41 @@
+name: Test and Deploy (HTML)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: دریافت کد
+        uses: actions/checkout@v3
+
+      - name: بررسی وجود index.html
+        run: |
+          if [ ! -f index.html ]; then
+            echo "❌ فایل index.html پیدا نشد!"
+            exit 1
+          fi
+          echo "✅ فایل index.html پیدا شد."
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: دریافت کد
+        uses: actions/checkout@v3
+
+      - name: ساخت پوشه انتشار
+        run: |
+          mkdir public
+          cp index.html public/
+
+      - name: انتشار روی GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
